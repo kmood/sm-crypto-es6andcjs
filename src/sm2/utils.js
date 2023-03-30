@@ -1,6 +1,7 @@
 /* eslint-disable no-bitwise, no-mixed-operators, no-use-before-define, max-len */
-const {BigInteger, SecureRandom} = require('jsbn')
-const {ECCurveFp} = require('./ec')
+import { BigInteger, SecureRandom } from 'jsbn'
+
+import { ECCurveFp } from './ec'
 
 const rng = new SecureRandom()
 const {curve, G, n} = generateEcparam()
@@ -169,7 +170,7 @@ function verifyPublicKey(publicKey) {
 /**
  * 验证公钥是否等价，等价返回true
  */
-function comparePublicKeyHex(publicKey1, publicKey2) {
+export function comparePublicKeyHex(publicKey1, publicKey2) {
   const point1 = curve.decodePointHex(publicKey1)
   if (!point1) return false
 
@@ -179,7 +180,7 @@ function comparePublicKeyHex(publicKey1, publicKey2) {
   return point1.equals(point2)
 }
 
-module.exports = {
+export default {
   getGlobalCurve,
   generateEcparam,
   generateKeyPairHex,
@@ -190,5 +191,5 @@ module.exports = {
   arrayToUtf8,
   hexToArray,
   verifyPublicKey,
-  comparePublicKeyHex,
+  comparePublicKeyHex
 }

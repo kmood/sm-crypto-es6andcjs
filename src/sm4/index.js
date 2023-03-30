@@ -1,9 +1,9 @@
 /* eslint-disable no-bitwise, no-mixed-operators, complexity */
-const DECRYPT = 0
-const ROUND = 32
-const BLOCK = 16
+export const DECRYPT = 0
+export const ROUND = 32
+export const BLOCK = 16
 
-const Sbox = [
+export const Sbox = [
   0xd6, 0x90, 0xe9, 0xfe, 0xcc, 0xe1, 0x3d, 0xb7, 0x16, 0xb6, 0x14, 0xc2, 0x28, 0xfb, 0x2c, 0x05,
   0x2b, 0x67, 0x9a, 0x76, 0x2a, 0xbe, 0x04, 0xc3, 0xaa, 0x44, 0x13, 0x26, 0x49, 0x86, 0x06, 0x99,
   0x9c, 0x42, 0x50, 0xf4, 0x91, 0xef, 0x98, 0x7a, 0x33, 0x54, 0x0b, 0x43, 0xed, 0xcf, 0xac, 0x62,
@@ -22,7 +22,7 @@ const Sbox = [
   0x18, 0xf0, 0x7d, 0xec, 0x3a, 0xdc, 0x4d, 0x20, 0x79, 0xee, 0x5f, 0x3e, 0xd7, 0xcb, 0x39, 0x48
 ]
 
-const CK = [
+export const CK = [
   0x00070e15, 0x1c232a31, 0x383f464d, 0x545b6269,
   0x70777e85, 0x8c939aa1, 0xa8afb6bd, 0xc4cbd2d9,
   0xe0e7eef5, 0xfc030a11, 0x181f262d, 0x343b4249,
@@ -36,7 +36,7 @@ const CK = [
 /**
  * 16 进制串转字节数组
  */
-function hexToArray(str) {
+export function hexToArray(str) {
   const arr = []
   for (let i = 0, len = str.length; i < len; i += 2) {
     arr.push(parseInt(str.substr(i, 2), 16))
@@ -47,7 +47,7 @@ function hexToArray(str) {
 /**
  * 字节数组转 16 进制串
  */
-function ArrayToHex(arr) {
+export function ArrayToHex(arr) {
   return arr.map(item => {
     item = item.toString(16)
     return item.length === 1 ? '0' + item : item
@@ -57,7 +57,7 @@ function ArrayToHex(arr) {
 /**
  * utf8 串转字节数组
  */
-function utf8ToArray(str) {
+export function utf8ToArray(str) {
   const arr = []
 
   for (let i = 0, len = str.length; i < len; i++) {
@@ -95,7 +95,7 @@ function utf8ToArray(str) {
 /**
  * 字节数组转 utf8 串
  */
-function arrayToUtf8(arr) {
+export function arrayToUtf8(arr) {
   const str = []
   for (let i = 0, len = arr.length; i < len; i++) {
     if (arr[i] >= 0xf0 && arr[i] <= 0xf7) {
@@ -130,7 +130,7 @@ function rotl(x, n) {
 /**
  * 非线性变换
  */
-function byteSub(a) {
+export function byteSub(a) {
   return (Sbox[a >>> 24 & 0xFF] & 0xFF) << 24 |
     (Sbox[a >>> 16 & 0xFF] & 0xFF) << 16 |
     (Sbox[a >>> 8 & 0xFF] & 0xFF) << 8 |
@@ -140,21 +140,21 @@ function byteSub(a) {
 /**
  * 线性变换，加密/解密用
  */
-function l1(b) {
+export function l1(b) {
   return b ^ rotl(b, 2) ^ rotl(b, 10) ^ rotl(b, 18) ^ rotl(b, 24)
 }
 
 /**
  * 线性变换，生成轮密钥用
  */
-function l2(b) {
+export function l2(b) {
   return b ^ rotl(b, 13) ^ rotl(b, 23)
 }
 
 /**
  * 以一组 128 比特进行加密/解密操作
  */
-function sms4Crypt(input, output, roundKey) {
+export function sms4Crypt(input, output, roundKey) {
   const x = new Array(4)
 
   // 字节数组转成字数组（此处 1 字 = 32 比特）
@@ -194,7 +194,7 @@ function sms4Crypt(input, output, roundKey) {
 /**
  * 密钥扩展算法
  */
-function sms4KeyExt(key, roundKey, cryptFlag) {
+export function sms4KeyExt(key, roundKey, cryptFlag) {
   const x = new Array(4)
 
   // 字节数组转成字数组（此处 1 字 = 32 比特）
@@ -238,7 +238,7 @@ function sms4KeyExt(key, roundKey, cryptFlag) {
   }
 }
 
-function sm4(inArray, key, cryptFlag, {
+export function sm4(inArray, key, cryptFlag, {
   padding = 'pkcs#7', mode, iv = [], output = 'string'
 } = {}) {
   if (mode === 'cbc') {
@@ -349,11 +349,9 @@ function sm4(inArray, key, cryptFlag, {
   }
 }
 
-module.exports = {
-  encrypt(inArray, key, options) {
+export  function encrypt(inArray, key, options) {
     return sm4(inArray, key, 1, options)
-  },
-  decrypt(inArray, key, options) {
+  }
+export function decrypt(inArray, key, options) {
     return sm4(inArray, key, 0, options)
   }
-}

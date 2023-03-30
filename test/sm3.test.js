@@ -1,6 +1,6 @@
-const fs = require('fs')
-const path = require('path')
-const sm3 = require('../src/index').sm3
+import fs  from  'fs'
+import path from 'path'
+import sm3 from '../src/sm3/index'
 
 test('sm3: must match the result', () => {
     // 单字节

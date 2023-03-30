@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
-const {BigInteger} = require('jsbn')
+import { BigInteger } from 'jsbn'
 
-function bigintToValue(bigint) {
+export function bigintToValue(bigint) {
   let h = bigint.toString(16)
   if (h[0] !== '-') {
     // 正数
@@ -26,7 +26,7 @@ function bigintToValue(bigint) {
   return h
 }
 
-class ASN1Object {
+export class ASN1Object {
   constructor() {
     this.tlv = null
     this.t = '00'
@@ -66,7 +66,7 @@ class ASN1Object {
   }
 }
 
-class DERInteger extends ASN1Object {
+export class DERInteger extends ASN1Object {
   constructor(bigint) {
     super()
 
@@ -79,7 +79,7 @@ class DERInteger extends ASN1Object {
   }
 }
 
-class DERSequence extends ASN1Object {
+export class DERSequence extends ASN1Object {
   constructor(asn1Array) {
     super()
 
@@ -104,7 +104,7 @@ function getLenOfL(str, start) {
 /**
  * 获取 l
  */
-function getL(str, start) {
+export function getL(str, start) {
   // 获取 l
   const len = getLenOfL(str, start)
   const l = str.substr(start + 2, len * 2)
@@ -118,27 +118,26 @@ function getL(str, start) {
 /**
  * 获取 v 的位置
  */
-function getStartOfV(str, start) {
+export  function getStartOfV(str, start) {
   const len = getLenOfL(str, start)
   return start + (len + 1) * 2
 }
 
-module.exports = {
+
   /**
    * ASN.1 der 编码，针对 sm2 签名
    */
-  encodeDer(r, s) {
+export function encodeDer(r, s) {
     const derR = new DERInteger(r)
     const derS = new DERInteger(s)
     const derSeq = new DERSequence([derR, derS])
 
     return derSeq.getEncodedHex()
-  },
-
+  }
   /**
    * 解析 ASN.1 der，针对 sm2 验签
    */
-  decodeDer(input) {
+export function decodeDer(input) {
     // 结构：
     // input = | tSeq | lSeq | vSeq |
     // vSeq = | tR | lR | vR | tS | lS | vS |
@@ -158,4 +157,3 @@ module.exports = {
 
     return {r, s}
   }
-}

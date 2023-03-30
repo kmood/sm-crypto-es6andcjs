@@ -1,11 +1,11 @@
 // 消息扩展
-const W = new Uint32Array(68)
-const M = new Uint32Array(64) // W'
+export const W = new Uint32Array(68)
+export const M = new Uint32Array(64) // W'
 
 /**
  * 循环左移
  */
-function rotl(x, n) {
+export function rotl(x, n) {
   const s = n & 31
   return (x << s) | (x >>> (32 - s))
 }
@@ -13,7 +13,7 @@ function rotl(x, n) {
 /**
  * 二进制异或运算
  */
-function xor(x, y) {
+export function xor(x, y) {
   const result = []
   for (let i = x.length - 1; i >= 0; i--) result[i] = (x[i] ^ y[i]) & 0xff
   return result
@@ -22,21 +22,21 @@ function xor(x, y) {
 /**
  * 压缩函数中的置换函数 P0(X) = X xor (X <<< 9) xor (X <<< 17)
  */
-function P0(X) {
+export function P0(X) {
   return (X ^ rotl(X, 9)) ^ rotl(X, 17)
 }
 
 /**
  * 消息扩展中的置换函数 P1(X) = X xor (X <<< 15) xor (X <<< 23)
  */
-function P1(X) {
+export function P1(X) {
   return (X ^ rotl(X, 15)) ^ rotl(X, 23)
 }
 
 /**
  * sm3 本体
  */
-function sm3(array) {
+export function sm3(array) {
   let len = array.length * 8
 
   // k 是满足 len + 1 + k = 448mod512 的最小的非负整数
@@ -145,14 +145,14 @@ function sm3(array) {
 /**
  * hmac 实现
  */
-const blockLen = 64
-const iPad = new Uint8Array(blockLen)
-const oPad = new Uint8Array(blockLen)
-for (let i = 0; i < blockLen; i++) {
-  iPad[i] = 0x36
-  oPad[i] = 0x5c
-}
-function hmac(input, key) {
+export function hmac(input, key) {
+  const blockLen = 64
+  const iPad = new Uint8Array(blockLen)
+  const oPad = new Uint8Array(blockLen)
+  for (let i = 0; i < blockLen; i++) {
+    iPad[i] = 0x36
+    oPad[i] = 0x5c
+  }
   // 密钥填充
   if (key.length > blockLen) key = sm3(key)
   while (key.length < blockLen) key.push(0)
@@ -162,9 +162,4 @@ function hmac(input, key) {
 
   const hash = sm3([...iPadKey, ...input])
   return sm3([...oPadKey, ...hash])
-}
-
-module.exports = {
-  sm3,
-  hmac,
 }

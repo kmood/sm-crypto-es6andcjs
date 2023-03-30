@@ -1,16 +1,16 @@
 /* eslint-disable no-use-before-define */
-const {BigInteger} = require('jsbn')
-const {encodeDer, decodeDer} = require('./asn1')
-const _ = require('./utils')
-const sm3 = require('./sm3').sm3
+import { BigInteger } from 'jsbn'
+import { encodeDer, decodeDer } from './asn1'
+import _ from './utils'
+import { sm3 } from './sm3'
 
-const {G, curve, n} = _.generateEcparam()
-const C1C2C3 = 0
+export const {G, curve, n} = _.generateEcparam()
+export const C1C2C3 = 0
 
 /**
  * 加密
  */
-function doEncrypt(msg, publicKey, cipherMode = 1) {
+export function doEncrypt(msg, publicKey, cipherMode = 1) {
   msg = typeof msg === 'string' ? _.hexToArray(_.utf8ToHex(msg)) : Array.prototype.slice.call(msg)
   publicKey = _.getGlobalCurve().decodePointHex(publicKey) // 先将公钥转成点
 
@@ -57,7 +57,7 @@ function doEncrypt(msg, publicKey, cipherMode = 1) {
 /**
  * 解密
  */
-function doDecrypt(encryptData, privateKey, cipherMode = 1, {
+export function doDecrypt(encryptData, privateKey, cipherMode = 1, {
   output = 'string',
 } = {}) {
   privateKey = new BigInteger(privateKey, 16)
@@ -111,7 +111,7 @@ function doDecrypt(encryptData, privateKey, cipherMode = 1, {
 /**
  * 签名
  */
-function doSignature(msg, privateKey, {
+export function doSignature(msg, privateKey, {
   pointPool, der, hash, publicKey, userId
 } = {}) {
   let hashHex = typeof msg === 'string' ? _.utf8ToHex(msg) : _.arrayToHex(msg)
@@ -156,7 +156,7 @@ function doSignature(msg, privateKey, {
 /**
  * 验签
  */
-function doVerifySignature(msg, signHex, publicKey, {der, hash, userId} = {}) {
+export function doVerifySignature(msg, signHex, publicKey, {der, hash, userId} = {}) {
   let hashHex = typeof msg === 'string' ? _.utf8ToHex(msg) : _.arrayToHex(msg)
 
   if (hash) {
@@ -195,7 +195,7 @@ function doVerifySignature(msg, signHex, publicKey, {der, hash, userId} = {}) {
 /**
  * sm3杂凑算法
  */
-function getHash(hashHex, publicKey, userId = '1234567812345678') {
+export function getHash(hashHex, publicKey, userId = '1234567812345678') {
   // z = hash(entl || userId || a || b || gx || gy || px || py)
   userId = _.utf8ToHex(userId)
   const a = _.leftPad(G.curve.a.toBigInteger().toRadix(16), 64)
@@ -227,7 +227,7 @@ function getHash(hashHex, publicKey, userId = '1234567812345678') {
 /**
  * 计算公钥
  */
-function getPublicKeyFromPrivateKey(privateKey) {
+export function getPublicKeyFromPrivateKey(privateKey) {
   const PA = G.multiply(new BigInteger(privateKey, 16))
   const x = _.leftPad(PA.getX().toBigInteger().toString(16), 64)
   const y = _.leftPad(PA.getY().toBigInteger().toString(16), 64)
@@ -237,7 +237,7 @@ function getPublicKeyFromPrivateKey(privateKey) {
 /**
  * 获取椭圆曲线点
  */
-function getPoint() {
+export function getPoint() {
   const keypair = _.generateKeyPairHex()
   const PA = curve.decodePointHex(keypair.publicKey)
 
@@ -245,16 +245,4 @@ function getPoint() {
   keypair.x1 = PA.getX().toBigInteger()
 
   return keypair
-}
-
-module.exports = {
-  generateKeyPairHex: _.generateKeyPairHex,
-  compressPublicKeyHex: _.compressPublicKeyHex,
-  comparePublicKeyHex: _.comparePublicKeyHex,
-  doEncrypt,
-  doDecrypt,
-  doSignature,
-  doVerifySignature,
-  getPoint,
-  verifyPublicKey: _.verifyPublicKey,
 }

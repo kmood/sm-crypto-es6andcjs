@@ -1,4 +1,4 @@
-const sm2 = require('../src/index').sm2
+import  sm2 from '../src/sm2/index'
 
 const cipherMode = 1 // 1 - C1C3C2，0 - C1C2C3
 

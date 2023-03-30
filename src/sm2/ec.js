@@ -1,5 +1,5 @@
 /* eslint-disable no-case-declarations, max-len */
-const {BigInteger} = require('jsbn')
+import { BigInteger } from 'jsbn'
 
 /**
  * thanks for Tom Wu : http://www-cs-students.stanford.edu/~tjw/jsbn/
@@ -15,7 +15,7 @@ const THREE = new BigInteger('3')
 /**
  * 椭圆曲线域元素
  */
-class ECFieldElementFp {
+export class ECFieldElementFp {
   constructor(q, x) {
     this.x = x
     this.q = q
@@ -80,7 +80,7 @@ class ECFieldElementFp {
   }
 }
 
-class ECPointFp {
+export class ECPointFp {
   constructor(curve, x, y, z) {
     this.curve = curve
     this.x = x
@@ -263,7 +263,7 @@ class ECPointFp {
 /**
  * 椭圆曲线 y^2 = x^3 + ax + b
  */
-class ECCurveFp {
+export class ECCurveFp {
   constructor(q, a, b) {
     this.q = q
     this.a = this.fromBigInteger(a)
@@ -326,7 +326,3 @@ class ECCurveFp {
   }
 }
 
-module.exports = {
-  ECPointFp,
-  ECCurveFp,
-}
